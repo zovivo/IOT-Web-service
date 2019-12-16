@@ -7,9 +7,12 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.demo.entity.Arduino;
 import com.demo.entity.ArduinoInfo;
@@ -23,12 +26,16 @@ import com.demo.repository.SensorInfoRepository;
 @Service
 public class ArduinoService {
 	
+	final static String urlInfluxDB = "https://us-west-2-1.aws.cloud2.influxdata.com/api/v2/write?org=c021011a737d335e&bucket=my-bucket";
+	final static String authorInfluxDB = "Token ak5mrOgELZ6XR7yQyF0Hc6BrGszJ3JciaUwBJJnkFlMK76ZTdMKNIxOKdH_fBOl25qZ5huoxeozKjuh_-xIzOg==";
 	@Autowired
 	private ArduinoDAO arduinoDAO;
 	@Autowired
 	private ArduinoInforRepository arduinoInforRepository;
 	@Autowired
 	private SensorInfoRepository sensorInfoRepository;
+	
+	
 	
 	public Page<Arduino> searchAll(int page, int pageSize){
 		PageRequest pageRequest = new PageRequest(page, pageSize);
@@ -60,6 +67,7 @@ public class ArduinoService {
 		arduino.setArduinoInfo(arduinoInfo);
 		arduino.setSensorInfo(sensorInfo);
 		arduino= arduinoDAO.insert(arduino);
+		insertLogToInfluxDB(arduino);
 		return ;
 	}
 	
@@ -71,7 +79,18 @@ public class ArduinoService {
 		return sensorInfoRepository.getById(id);
 	}
 	
-//	@Scheduled(fixedDelay=5000L)
+	public void insertLogToInfluxDB(Arduino arduino) {
+		float value = arduino.getValue();
+		String sensorName = arduino.getSensorInfo().getName();
+		RestTemplate template = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", authorInfluxDB);
+		String body = "arduino_1,sensor="+sensorName+" value="+value;
+		HttpEntity<Object> request = new HttpEntity<>(body,headers);
+		template.postForEntity(urlInfluxDB, request, Object.class);
+	}
+	
+	@Scheduled(fixedDelay=5000L)
 	public void randomImport1() {
 		long fromTime =System.currentTimeMillis();
 //		long fromTime =1575565200000l;
@@ -84,8 +103,8 @@ public class ArduinoService {
 			arduino.setStatus(0);
 			arduino.setValue(rand_int1);
 			arduino.setArduinoInfo(getAdruinoInfo(1));
-			arduino.setSensorInfo(getSensorInfo(1));
-			arduinoDAO.insert(arduino);
+			arduino.setSensorInfo(getSensorInfo(3));
+			insertLogToInfluxDB(arduino);
 			System.out.println("Id : "+arduino.getId()+" Value: "+arduino.getValue());
 			fromTime+= 10*60*1000l;	
 //		}
