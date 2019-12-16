@@ -90,7 +90,6 @@ public class ArduinoService {
 		template.postForEntity(urlInfluxDB, request, Object.class);
 	}
 	
-	@Scheduled(fixedDelay=5000L)
 	public void randomImport1() {
 		long fromTime =System.currentTimeMillis();
 //		long fromTime =1575565200000l;
@@ -111,7 +110,6 @@ public class ArduinoService {
 		System.out.println("Finish !!!");
 	}
 	
-//	@Scheduled(fixedDelay=5000L)
 	public void randomImport2() {
 		long fromTime =System.currentTimeMillis();
 //		long fromTime =1575565200000l;
@@ -132,7 +130,6 @@ public class ArduinoService {
 		System.out.println("Finish !!!");
 	}
 	
-//	@Scheduled(fixedDelay=5000L)
 	public void randomImport3() {
 		long fromTime =System.currentTimeMillis();
 //		long fromTime =1575565200000l;
