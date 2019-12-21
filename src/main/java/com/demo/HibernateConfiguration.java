@@ -26,6 +26,8 @@ import javax.sql.DataSource;
         HibernateJpaAutoConfiguration.class })
 public class HibernateConfiguration {
 
+	final static String dangDBURL = "jdbc:mysql://database-iot.cscr5rtl6r5e.us-east-1.rds.amazonaws.com:3306/iotDB";
+	
 	@Autowired
 	private Environment env;
 
@@ -35,7 +37,8 @@ public class HibernateConfiguration {
  
         // See: application.properties
         dataSource.setDriverClassName(env.getProperty("spring.datasource.driver-class-name"));
-        dataSource.setUrl(env.getProperty("spring.datasource.url"));
+//        dataSource.setUrl(env.getProperty("spring.datasource.url"));
+        dataSource.setUrl(dangDBURL);
         dataSource.setUsername(env.getProperty("spring.datasource.username"));
         dataSource.setPassword(env.getProperty("spring.datasource.password"));
  

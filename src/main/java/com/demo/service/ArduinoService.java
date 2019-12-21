@@ -66,6 +66,7 @@ public class ArduinoService {
 		SensorInfo sensorInfo = sensorInfoRepository.getById(input.getSensorId());
 		arduino.setArduinoInfo(arduinoInfo);
 		arduino.setSensorInfo(sensorInfo);
+		arduino.setCreatetime(System.currentTimeMillis());
 		arduino= arduinoDAO.insert(arduino);
 		insertLogToInfluxDB(arduino);
 		return ;
@@ -89,12 +90,11 @@ public class ArduinoService {
 		HttpEntity<Object> request = new HttpEntity<>(body,headers);
 		template.postForEntity(urlInfluxDB, request, Object.class);
 	}
-	
+//	@Scheduled(fixedDelay = 1000000000000000l)
 	public void randomImport1() {
-		long fromTime =System.currentTimeMillis();
-//		long fromTime =1575565200000l;
+		long fromTime =1575563400000l;
 		Random rand = new Random(); 
-//		while(fromTime <= 1575651600000l) {
+		while(fromTime <= System.currentTimeMillis()) {
 			System.out.println("Random new Log !!!");
 			int rand_int1 = rand.nextInt(50);
 			Arduino arduino = new Arduino();
@@ -103,18 +103,18 @@ public class ArduinoService {
 			arduino.setValue(rand_int1);
 			arduino.setArduinoInfo(getAdruinoInfo(1));
 			arduino.setSensorInfo(getSensorInfo(3));
-			insertLogToInfluxDB(arduino);
+			arduinoDAO.insert(arduino);
+//			insertLogToInfluxDB(arduino);
 			System.out.println("Id : "+arduino.getId()+" Value: "+arduino.getValue());
 			fromTime+= 10*60*1000l;	
-//		}
+		}
 		System.out.println("Finish !!!");
 	}
-	
+//	@Scheduled(fixedDelay = 1000000000000000l)
 	public void randomImport2() {
-		long fromTime =System.currentTimeMillis();
-//		long fromTime =1575565200000l;
+		long fromTime =1575563400000l;
 		Random rand = new Random(); 
-//		while(fromTime <= 1575651600000l) {
+		while(fromTime <=  System.currentTimeMillis()) {
 			System.out.println("Random new Log !!!");
 			int rand_int1 = rand.nextInt(50);
 			Arduino arduino = new Arduino();
@@ -126,15 +126,14 @@ public class ArduinoService {
 			arduinoDAO.insert(arduino);
 			System.out.println("Id : "+arduino.getId()+" Value: "+arduino.getValue());
 			fromTime+= 10*60*1000l;	
-//		}
+		}
 		System.out.println("Finish !!!");
 	}
-	
+//	@Scheduled(fixedDelay = 1000000000000000l)
 	public void randomImport3() {
-		long fromTime =System.currentTimeMillis();
-//		long fromTime =1575565200000l;
+		long fromTime =1575563400000l;
 		Random rand = new Random(); 
-//		while(fromTime <= 1575651600000l) {
+		while(fromTime <= System.currentTimeMillis()) {
 			System.out.println("Random new Log !!!");
 			int rand_int1 = rand.nextInt(50);
 			Arduino arduino = new Arduino();
@@ -146,7 +145,7 @@ public class ArduinoService {
 			arduinoDAO.insert(arduino);
 			System.out.println("Id : "+arduino.getId()+" Value: "+arduino.getValue());
 			fromTime+= 10*60*1000l;	
-//		}
+		}
 		System.out.println("Finish !!!");
 	}
 }
